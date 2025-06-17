@@ -96,9 +96,8 @@ export function ProductForm({
   };
 
   const handleFormSubmit = (data: CreateProduct) => {
-    // If editing, make sure to include the product ID
     if (isEditing && product) {
-      onSubmit({ ...data, id: product.id });
+      onSubmit({ ...data, id: product.id } as IProduct);
     } else {
       onSubmit(data);
     }

@@ -5,7 +5,6 @@ export { ProductCard } from "./components/ProductCard";
 export { ProductSlider } from "./components/ProductSlider";
 export { ProductTable } from "./components/ProductTable";
 export { ViewToggle } from "./components/ViewToggle";
-export { EditProductSlider } from "./components/EditProductSlider";
 
 // Pages
 export { ProductsPage } from "./pages/ProductsPage";
