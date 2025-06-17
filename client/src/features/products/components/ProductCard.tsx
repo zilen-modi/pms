@@ -213,9 +213,9 @@ export function ProductCard({ product, onDuplicate }: ProductCardProps) {
                   {product.tags.map((tag, index) => (
                     <Chip
                       key={index}
-                      variant="primary"
+                      variant="secondary"
                       size="md"
-                      className="px-3 py-1.5"
+                      className="bg-pink-50 text-pink-700 px-3 py-1.5"
                     >
                       {tag}
                     </Chip>
@@ -434,10 +434,11 @@ export function ProductCard({ product, onDuplicate }: ProductCardProps) {
                 {watchedTags.map((tag, index) => (
                   <Chip
                     key={index}
-                    variant="primary"
+                    variant="secondary"
                     size="sm"
                     onRemove={() => removeTag(tag)}
                     removable
+                    className="bg-pink-50 text-pink-700"
                   >
                     {tag}
                   </Chip>
@@ -474,6 +475,7 @@ export function ProductCard({ product, onDuplicate }: ProductCardProps) {
                 type="submit"
                 isLoading={editProductMutation.isPending}
                 disabled={!isDirty}
+                className="bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
               >
                 Save
               </Button>

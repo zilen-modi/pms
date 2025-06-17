@@ -3,23 +3,30 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProductSlider } from "../components/ProductSlider";
-import { useAddProduct, useGetProducts } from "@/hooks/use-products";
+import { useAddProduct, useGetProducts, useEditProduct, useDeleteProduct } from "@/hooks/use-products";
+import { useViewPreference } from "@/hooks/use-view-preference";
 import { Button, Input } from "@/components";
 import type { CreateProduct } from "@/schemas/product.schema";
 import { IProduct } from "@/types";
 import { ProductCard } from "@/features/products/components/ProductCard";
+import { ProductTable } from "@/features/products/components/ProductTable";
+import { ViewToggle } from "@/features/products/components/ViewToggle";
+import { EditProductSlider } from "@/features/products/components/EditProductSlider";
+
 
 export function ProductsPage() {
   const searchParams = useSearchParams();
   const initialSearchQuery = searchParams.get("search") || "";
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [isProductSliderOpen, setIsProductSliderOpen] = useState(false);
-  const [duplicateProduct, setDuplicateProduct] = useState<
-    IProduct | undefined
-  >(undefined);
+  const [duplicateProduct, setDuplicateProduct] = useState<IProduct | undefined>(undefined);
+  const [editProduct, setEditProduct] = useState<IProduct | undefined>(undefined);
 
   const { data: products, isLoading } = useGetProducts();
   const addProductMutation = useAddProduct();
+  const editProductMutation = useEditProduct();
+  const deleteProductMutation = useDeleteProduct();
+  const { viewType, setViewType } = useViewPreference();
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
@@ -68,6 +75,33 @@ export function ProductsPage() {
     setDuplicateProduct(undefined);
   };
 
+  const handleEdit = (product: IProduct) => {
+    setEditProduct(product);
+  };
+
+  const handleEditSubmit = async (data: CreateProduct) => {
+    try {
+      await editProductMutation.mutateAsync({
+        productDetails: data,
+      });
+      setEditProduct(undefined);
+    } catch (error) {
+      console.error("Failed to edit product:", error);
+    }
+  };
+
+  const handleDelete = async (product: IProduct) => {
+    if (window.confirm(`Are you sure you want to delete "${product.name}"? This action cannot be undone.`)) {
+      try {
+        await deleteProductMutation.mutateAsync({
+          productId: product.id,
+        });
+      } catch (error) {
+        console.error("Failed to delete product:", error);
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -83,6 +117,8 @@ export function ProductsPage() {
           <h1 className="text-2xl font-semibold text-gray-900">Products</h1>
 
           <div className="flex items-center space-x-4">
+            <ViewToggle viewType={viewType} onViewChange={setViewType} />
+
             <div className="w-80">
               <Input
                 type="text"
@@ -141,54 +177,62 @@ export function ProductsPage() {
       </div>
 
       <div>
-        <div className="space-y-4">
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-12">
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2"
-                />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
-                No products found
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {searchQuery
-                  ? "Try adjusting your search."
-                  : "Get started by creating a new product."}
-              </p>
-              {!searchQuery && (
-                <div className="mt-6">
-                  <Button
-                    variant="primary"
-                    onClick={handleNewProduct}
-                    className="bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
-                  >
-                    Add Product
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            filteredProducts.map((product) => (
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2"
+              />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No products found
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {searchQuery
+                ? "Try adjusting your search."
+                : "Get started by creating a new product."}
+            </p>
+            {!searchQuery && (
+              <div className="mt-6">
+                <Button
+                  variant="primary"
+                  onClick={handleNewProduct}
+                  className="bg-pink-600 hover:bg-pink-700 focus:ring-pink-500"
+                >
+                  Add Product
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : viewType === "table" ? (
+          <ProductTable
+            products={filteredProducts}
+            onDuplicate={handleDuplicate}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ) : (
+          <div className="space-y-4">
+            {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
                 onDuplicate={handleDuplicate}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* Add/Duplicate Product Slider */}
       <ProductSlider
         isOpen={isProductSliderOpen}
         onClose={handleCloseSlider}
@@ -196,6 +240,17 @@ export function ProductsPage() {
         isLoading={addProductMutation.isPending}
         product={duplicateProduct}
       />
+
+      {/* Edit Product Slider */}
+      {editProduct && (
+        <EditProductSlider
+          isOpen={!!editProduct}
+          onClose={() => setEditProduct(undefined)}
+          onSubmit={handleEditSubmit}
+          isLoading={editProductMutation.isPending}
+          product={editProduct}
+        />
+      )}
     </div>
   );
 }
