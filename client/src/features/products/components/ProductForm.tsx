@@ -17,6 +17,7 @@ interface ProductFormProps {
     isValid: boolean;
     isDirty: boolean;
   }) => void;
+  isEditing?: boolean;
 }
 
 export function ProductForm({
@@ -25,6 +26,7 @@ export function ProductForm({
   isOpen,
   formId = "product-form",
   onFormStateChange,
+  isEditing = false,
 }: ProductFormProps) {
   const {
     register,
@@ -45,12 +47,21 @@ export function ProductForm({
     },
   });
 
-  // Reset form when product changes (for duplicate functionality)
+  // Reset form when product changes or when the slider opens/closes
   useEffect(() => {
     if (!isOpen) {
       reset();
+    } else if (product) {
+      reset({
+        name: product.name,
+        description: product.description || "",
+        price: product.price,
+        status: product.status,
+        tags: product.tags || [],
+        imageUrl: product.imageUrl || "",
+      });
     }
-  }, [isOpen, reset]);
+  }, [isOpen, product, reset]);
 
   // Notify parent of form state changes
   useEffect(() => {
@@ -84,8 +95,17 @@ export function ProductForm({
     }
   };
 
+  const handleFormSubmit = (data: CreateProduct) => {
+    // If editing, make sure to include the product ID
+    if (isEditing && product) {
+      onSubmit({ ...data, id: product.id });
+    } else {
+      onSubmit(data);
+    }
+  };
+
   return (
-    <form id={formId} onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form id={formId} onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       <Input
         {...register("name")}
         label="Product Name"

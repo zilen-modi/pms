@@ -11,16 +11,14 @@ import { IProduct } from "@/types";
 import { ProductCard } from "@/features/products/components/ProductCard";
 import { ProductTable } from "@/features/products/components/ProductTable";
 import { ViewToggle } from "@/features/products/components/ViewToggle";
-import { EditProductSlider } from "@/features/products/components/EditProductSlider";
-
 
 export function ProductsPage() {
   const searchParams = useSearchParams();
   const initialSearchQuery = searchParams.get("search") || "";
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [isProductSliderOpen, setIsProductSliderOpen] = useState(false);
-  const [duplicateProduct, setDuplicateProduct] = useState<IProduct | undefined>(undefined);
-  const [editProduct, setEditProduct] = useState<IProduct | undefined>(undefined);
+  const [sliderMode, setSliderMode] = useState<'add' | 'edit'>('add');
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(undefined);
 
   const { data: products, isLoading } = useGetProducts();
   const addProductMutation = useAddProduct();
@@ -50,44 +48,42 @@ export function ProductsPage() {
 
   const handleAddProduct = async (data: CreateProduct) => {
     try {
-      await addProductMutation.mutateAsync({
-        productDetails: data,
-      });
-      setIsProductSliderOpen(false);
-      setDuplicateProduct(undefined);
+      if (sliderMode === 'edit') {
+        await editProductMutation.mutateAsync({
+          productDetails: data,
+        });
+      } else {
+        await addProductMutation.mutateAsync({
+          productDetails: data,
+        });
+      }
+      closeSlider();
     } catch (error) {
-      console.error("Failed to add product:", error);
+      console.error(`Failed to ${sliderMode} product:`, error);
     }
   };
 
   const handleDuplicate = (product: IProduct) => {
-    setDuplicateProduct(product);
+    setSliderMode('add');
+    setSelectedProduct(product);
     setIsProductSliderOpen(true);
   };
 
   const handleNewProduct = () => {
-    setDuplicateProduct(undefined);
+    setSliderMode('add');
+    setSelectedProduct(undefined);
     setIsProductSliderOpen(true);
   };
 
-  const handleCloseSlider = () => {
-    setIsProductSliderOpen(false);
-    setDuplicateProduct(undefined);
-  };
-
   const handleEdit = (product: IProduct) => {
-    setEditProduct(product);
+    setSliderMode('edit');
+    setSelectedProduct(product);
+    setIsProductSliderOpen(true);
   };
 
-  const handleEditSubmit = async (data: CreateProduct) => {
-    try {
-      await editProductMutation.mutateAsync({
-        productDetails: data,
-      });
-      setEditProduct(undefined);
-    } catch (error) {
-      console.error("Failed to edit product:", error);
-    }
+  const closeSlider = () => {
+    setIsProductSliderOpen(false);
+    setSelectedProduct(undefined);
   };
 
   const handleDelete = async (product: IProduct) => {
@@ -232,25 +228,15 @@ export function ProductsPage() {
         )}
       </div>
 
-      {/* Add/Duplicate Product Slider */}
+      {/* Product Slider (for both Add/Edit/Duplicate) */}
       <ProductSlider
         isOpen={isProductSliderOpen}
-        onClose={handleCloseSlider}
+        onClose={closeSlider}
         onSubmit={handleAddProduct}
-        isLoading={addProductMutation.isPending}
-        product={duplicateProduct}
+        isLoading={sliderMode === 'edit' ? editProductMutation.isPending : addProductMutation.isPending}
+        product={selectedProduct}
+        isEditing={sliderMode === 'edit'}
       />
-
-      {/* Edit Product Slider */}
-      {editProduct && (
-        <EditProductSlider
-          isOpen={!!editProduct}
-          onClose={() => setEditProduct(undefined)}
-          onSubmit={handleEditSubmit}
-          isLoading={editProductMutation.isPending}
-          product={editProduct}
-        />
-      )}
     </div>
   );
 }

@@ -1,64 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { IProduct, ICreateProduct, IUpdateProduct } from "@/types";
 import { CustomError } from "@/middleware/error-handler";
+import { mockProducts } from "@/data/mockProducts";
 
-let products: IProduct[] = [
-  {
-    id: "1",
-    name: "iPhone 15 Pro",
-    description:
-      "The most advanced iPhone ever with titanium design, powerful A17 Pro chip, and professional camera system.",
-    price: 999.99,
-    status: "active",
-    tags: ["electronics", "smartphone", "apple"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "MacBook Air M2",
-    description:
-      "Supercharged by the M2 chip, featuring a 13.6-inch Liquid Retina display and all-day battery life.",
-    price: 1199.99,
-    status: "active",
-    tags: ["electronics", "laptop", "apple", "productivity"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    name: "AirPods Pro",
-    description:
-      "Active Noise Cancellation, Adaptive Transparency, and spatial audio for an immersive listening experience.",
-    price: 249.99,
-    status: "active",
-    tags: ["electronics", "audio", "apple", "wireless"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    name: "Samsung Galaxy S24",
-    description:
-      "Premium Android smartphone with AI-powered features, exceptional camera system, and sleek design.",
-    price: 899.99,
-    status: "archived",
-    tags: ["electronics", "smartphone", "samsung"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "5",
-    name: "Dell XPS 13",
-    description:
-      "Ultra-thin laptop with InfinityEdge display, premium build quality, and exceptional performance.",
-    price: 1299.99,
-    status: "active",
-    tags: ["electronics", "laptop", "dell", "productivity"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+let products: IProduct[] = [...mockProducts];
 
 export const getProducts = async (): Promise<IProduct[]> => {
   return products;

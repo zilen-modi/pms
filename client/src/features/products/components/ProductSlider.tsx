@@ -12,6 +12,7 @@ interface ProductSliderProps {
   onSubmit: (data: CreateProduct) => void;
   isLoading?: boolean;
   product?: IProduct;
+  isEditing?: boolean;
 }
 
 export function ProductSlider({
@@ -20,6 +21,7 @@ export function ProductSlider({
   onSubmit,
   isLoading,
   product,
+  isEditing = false,
 }: ProductSliderProps) {
   const [formState, setFormState] = useState({
     isValid: false,
@@ -27,24 +29,32 @@ export function ProductSlider({
   });
   const formId = "product-form";
 
-  const duplicateProduct: IProduct | undefined = product
-    ? {
-        id: "",
-        name: `${product.name} (Copy)`,
-        description: product.description,
-        price: product.price,
-        status: product.status,
-        tags: [...product.tags],
-        imageUrl: product.imageUrl,
-      }
-    : undefined;
+  let sliderTitle = "Add New Product";
+  let buttonText = "Create Product";
+  let productToUse = product;
+  
+  if (isEditing && product) {
+    sliderTitle = "Edit Product";
+    buttonText = "Update Product";
+  } else if (product) {
+    sliderTitle = "Duplicate Product";
+    productToUse = {
+      id: "",
+      name: `${product.name} (Copy)`,
+      description: product.description,
+      price: product.price,
+      status: product.status,
+      tags: [...product.tags],
+      imageUrl: product.imageUrl,
+    };
+  }
 
   return (
     <Slider
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      title={product ? "Duplicate Product" : "Add New Product"}
+      title={sliderTitle}
       footer={
         <div className="flex items-center gap-2">
           <Button
@@ -54,7 +64,7 @@ export function ProductSlider({
             isLoading={isLoading}
             disabled={!formState.isValid || !formState.isDirty || isLoading}
           >
-            Create Product
+            {buttonText}
           </Button>
           <Button variant="outline" onClick={onClose}>
             Cancel
@@ -64,11 +74,12 @@ export function ProductSlider({
     >
       {isOpen && (
         <ProductForm
-          product={duplicateProduct}
+          product={productToUse}
           onSubmit={onSubmit}
           isOpen={isOpen}
           formId={formId}
           onFormStateChange={setFormState}
+          isEditing={isEditing}
         />
       )}
     </Slider>
