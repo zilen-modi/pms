@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Slider, Button } from "@/components";
 import { ProductForm } from "./ProductForm";
 import type { CreateProduct } from "@/schemas/product.schema";
@@ -29,25 +29,33 @@ export function ProductSlider({
   });
   const formId = "product-form";
 
-  let sliderTitle = "Add New Product";
-  let buttonText = "Create Product";
-  let productToUse = product;
-  
-  if (isEditing && product) {
-    sliderTitle = "Edit Product";
-    buttonText = "Update Product";
-  } else if (product) {
-    sliderTitle = "Duplicate Product";
-    productToUse = {
-      id: "",
-      name: `${product.name} (Copy)`,
-      description: product.description,
-      price: product.price,
-      status: product.status,
-      tags: [...product.tags],
-      imageUrl: product.imageUrl,
+  const { sliderTitle, buttonText, productToUse } = useMemo(() => {
+    let title = "Add New Product";
+    let text = "Create Product";
+    let productData = product;
+    
+    if (isEditing && product) {
+      title = "Edit Product";
+      text = "Update Product";
+    } else if (product) {
+      title = "Duplicate Product";
+      productData = {
+        id: "",
+        name: `${product.name} (Copy)`,
+        description: product.description,
+        price: product.price,
+        status: product.status,
+        tags: [...product.tags],
+        imageUrl: product.imageUrl,
+      };
+    }
+    
+    return {
+      sliderTitle: title,
+      buttonText: text,
+      productToUse: productData,
     };
-  }
+  }, [product, isEditing]);
 
   return (
     <Slider

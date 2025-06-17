@@ -17,7 +17,7 @@ export function ProductsPage() {
   const initialSearchQuery = searchParams.get("search") || "";
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [isProductSliderOpen, setIsProductSliderOpen] = useState(false);
-  const [sliderMode, setSliderMode] = useState<'add' | 'edit'>('add');
+  const [sliderMode, setSliderMode] = useState<'add' | 'edit' | 'duplicate'>('add');
   const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(undefined);
 
   const { data: products, isLoading } = useGetProducts();
@@ -53,6 +53,7 @@ export function ProductsPage() {
           productDetails: data,
         });
       } else {
+        // For both 'add' and 'duplicate', we create a new product
         await addProductMutation.mutateAsync({
           productDetails: data,
         });
@@ -64,7 +65,7 @@ export function ProductsPage() {
   };
 
   const handleDuplicate = (product: IProduct) => {
-    setSliderMode('add');
+    setSliderMode('duplicate');
     setSelectedProduct(product);
     setIsProductSliderOpen(true);
   };
