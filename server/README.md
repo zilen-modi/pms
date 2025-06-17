@@ -120,7 +120,6 @@ src/
 | POST   | `/api/products`       | Create new product             | - |
 | PUT    | `/api/products/:id`   | Update product                 | - |
 | DELETE | `/api/products/:id`   | Delete product                 | - |
-| GET    | `/api/products/tags`  | Get all unique tags            | - |
 
 ### System
 
@@ -128,115 +127,6 @@ src/
 |--------|-----------------|----------------|
 | GET    | `/api/health`   | Health check   |
 | GET    | `/`             | API information |
-
-## 📊 Query Parameters for GET /api/products
-
-- **search**: Search in name, description, and tags
-- **status**: Filter by status (`active`, `archived`)
-- **tags**: Filter by tags (array)
-- **minPrice**: Minimum price filter (number)
-- **maxPrice**: Maximum price filter (number)
-- **sortBy**: Sort by field (`name`, `price`, `status`, `createdAt`)
-- **sortOrder**: Sort order (`asc`, `desc`)
-- **page**: Page number (default: 1)
-- **limit**: Items per page (default: 10, max: 100)
-
-### Example Requests
-
-```bash
-# Get all products
-curl http://localhost:5000/api/products
-
-# Search products
-curl "http://localhost:5000/api/products?search=laptop"
-
-# Filter by status and sort
-curl "http://localhost:5000/api/products?status=active&sortBy=price&sortOrder=desc"
-
-# Pagination
-curl "http://localhost:5000/api/products?page=2&limit=5"
-
-# Complex query
-curl "http://localhost:5000/api/products?search=tech&minPrice=100&maxPrice=1000&sortBy=name&limit=20"
-```
-
-## 📋 Request/Response Format
-
-### Success Response
-```json
-{
-  "success": true,
-  "data": { ... },
-  "message": "Optional success message"
-}
-```
-
-### Error Response
-```json
-{
-  "success": false,
-  "error": "Error message",
-  "details": "Optional error details"
-}
-```
-
-### Paginated Response
-```json
-{
-  "success": true,
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 50,
-    "pages": 5
-  }
-}
-```
-
-## 🏗️ Data Models
-
-### Product Schema
-
-```typescript
-interface IProduct {
-  id: string;                    // UUID
-  name: string;                  // Required, min 1 char
-  description?: string;          // Optional
-  price: number;                 // Required, positive number
-  status: "active" | "archived"; // Required enum
-  tags: string[];               // Array of strings
-  imageUrl?: string;            // Optional URL
-  createdAt?: string;           // ISO date string
-  updatedAt?: string;           // ISO date string
-}
-```
-
-### Validation Rules
-
-```typescript
-// Create Product
-{
-  name: string (min: 1, max: 255),
-  description?: string (max: 1000),
-  price: number (positive),
-  status: "active" | "archived",
-  tags: string[] (max 10 items),
-  imageUrl?: string (valid URL)
-}
-
-// Update Product
-{
-  name?: string (min: 1, max: 255),
-  description?: string (max: 1000),
-  price?: number (positive),
-  status?: "active" | "archived",
-  tags?: string[] (max 10 items),
-  imageUrl?: string (valid URL)
-}
-```
-
-## 🔧 Environment Configuration
 
 ### Environment Variables
 
