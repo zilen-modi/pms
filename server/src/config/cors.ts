@@ -2,10 +2,9 @@ import { CorsOptions } from "cors";
 
 const corsOptions: CorsOptions = {
   origin: [
-    "http://localhost:3000", // Next.js dev server
-    "http://localhost:3001", // Alternative port
+    "http://localhost:3000",
+    "http://localhost:3001",
     "http://127.0.0.1:3000",
-    // Add production URLs here when deploying
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -16,7 +15,7 @@ const corsOptions: CorsOptions = {
     "Authorization",
   ],
   credentials: true,
-  optionsSuccessStatus: 200, // For legacy browser support
+  optionsSuccessStatus: 200,
 };
 
-export default corsOptions; 
+export default corsOptions;

@@ -3,7 +3,6 @@ import productRoutes from "./product-routes";
 
 const router = Router();
 
-// Health check endpoint
 router.get("/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -12,7 +11,6 @@ router.get("/health", (req, res) => {
   });
 });
 
-// API routes
 router.use("/products", productRoutes);
 
 export default router; 

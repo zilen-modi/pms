@@ -189,7 +189,6 @@ export function ProductTable({ products, onDuplicate, onEdit, onDelete }: Produc
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // Default sort by creation date if available
     initialState: {
       sorting: [{ id: "name", desc: false }],
     },

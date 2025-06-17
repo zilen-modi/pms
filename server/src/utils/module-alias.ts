@@ -1,7 +1,6 @@
 import moduleAlias from 'module-alias';
 import path from 'path';
 
-// Setup module aliases for production
 moduleAlias.addAliases({
   '@': path.join(__dirname, '..'),
   '@/types': path.join(__dirname, '..', 'types'),

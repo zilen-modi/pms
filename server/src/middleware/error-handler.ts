@@ -10,7 +10,6 @@ export const errorHandler = (
   // eslint-disable-next-line no-console
   console.error(err.stack);
 
-  // Handle custom errors
   if (err instanceof CustomError) {
     return res.status(err.status).json({
       success: false,
@@ -19,7 +18,6 @@ export const errorHandler = (
     });
   }
 
-  // Handle validation errors
   if (err.name === "ValidationError") {
     return res.status(400).json({
       success: false,
@@ -28,7 +26,6 @@ export const errorHandler = (
     });
   }
 
-  // Default server error
   return res.status(500).json({
     success: false,
     error: "Internal server error",

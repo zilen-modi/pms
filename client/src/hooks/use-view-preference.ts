@@ -1,32 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-export type ViewType = 'card' | 'table';
+export type ViewType = "card" | "table";
 
-const LOCAL_STORAGE_KEY = 'products-view-preference';
+const LOCAL_STORAGE_KEY = "products-view-preference";
 
 export const useViewPreference = () => {
-  const [viewType, setViewType] = useState<ViewType>('card');
+  const [viewType, setViewType] = useState<ViewType>("card");
 
-  // Load preference from localStorage on mount
   useEffect(() => {
     try {
-      const savedPreference = localStorage.getItem(LOCAL_STORAGE_KEY) as ViewType;
-      if (savedPreference && (savedPreference === 'card' || savedPreference === 'table')) {
+      const savedPreference = localStorage.getItem(
+        LOCAL_STORAGE_KEY
+      ) as ViewType;
+      if (
+        savedPreference &&
+        (savedPreference === "card" || savedPreference === "table")
+      ) {
         setViewType(savedPreference);
       }
     } catch (error) {
-      console.error('Failed to load view preference from localStorage:', error);
+      console.error("Failed to load view preference from localStorage:", error);
     }
   }, []);
 
-  // Save preference to localStorage when changed
   const updateViewType = (newViewType: ViewType) => {
     try {
       localStorage.setItem(LOCAL_STORAGE_KEY, newViewType);
       setViewType(newViewType);
     } catch (error) {
-      console.error('Failed to save view preference to localStorage:', error);
-      // Still update state even if localStorage fails
+      console.error("Failed to save view preference to localStorage:", error);
+
       setViewType(newViewType);
     }
   };
@@ -35,4 +38,4 @@ export const useViewPreference = () => {
     viewType,
     setViewType: updateViewType,
   };
-}; 
+};

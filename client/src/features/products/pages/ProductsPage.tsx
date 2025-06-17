@@ -3,7 +3,12 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProductSlider } from "../components/ProductSlider";
-import { useAddProduct, useGetProducts, useEditProduct, useDeleteProduct } from "@/hooks/use-products";
+import {
+  useAddProduct,
+  useGetProducts,
+  useEditProduct,
+  useDeleteProduct,
+} from "@/hooks/use-products";
 import { useViewPreference } from "@/hooks/use-view-preference";
 import { Button, Input } from "@/components";
 import type { CreateProduct } from "@/schemas/product.schema";
@@ -17,8 +22,12 @@ export function ProductsPage() {
   const initialSearchQuery = searchParams.get("search") || "";
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [isProductSliderOpen, setIsProductSliderOpen] = useState(false);
-  const [sliderMode, setSliderMode] = useState<'add' | 'edit' | 'duplicate'>('add');
-  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(undefined);
+  const [sliderMode, setSliderMode] = useState<"add" | "edit" | "duplicate">(
+    "add"
+  );
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | undefined>(
+    undefined
+  );
 
   const { data: products, isLoading } = useGetProducts();
   const addProductMutation = useAddProduct();
@@ -48,12 +57,11 @@ export function ProductsPage() {
 
   const handleAddProduct = async (data: CreateProduct) => {
     try {
-      if (sliderMode === 'edit') {
+      if (sliderMode === "edit") {
         await editProductMutation.mutateAsync({
           productDetails: data,
         });
       } else {
-        // For both 'add' and 'duplicate', we create a new product
         await addProductMutation.mutateAsync({
           productDetails: data,
         });
@@ -65,19 +73,19 @@ export function ProductsPage() {
   };
 
   const handleDuplicate = (product: IProduct) => {
-    setSliderMode('duplicate');
+    setSliderMode("duplicate");
     setSelectedProduct(product);
     setIsProductSliderOpen(true);
   };
 
   const handleNewProduct = () => {
-    setSliderMode('add');
+    setSliderMode("add");
     setSelectedProduct(undefined);
     setIsProductSliderOpen(true);
   };
 
   const handleEdit = (product: IProduct) => {
-    setSliderMode('edit');
+    setSliderMode("edit");
     setSelectedProduct(product);
     setIsProductSliderOpen(true);
   };
@@ -88,7 +96,11 @@ export function ProductsPage() {
   };
 
   const handleDelete = async (product: IProduct) => {
-    if (window.confirm(`Are you sure you want to delete "${product.name}"? This action cannot be undone.`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete "${product.name}"? This action cannot be undone.`
+      )
+    ) {
       try {
         await deleteProductMutation.mutateAsync({
           productId: product.id,
@@ -234,9 +246,13 @@ export function ProductsPage() {
         isOpen={isProductSliderOpen}
         onClose={closeSlider}
         onSubmit={handleAddProduct}
-        isLoading={sliderMode === 'edit' ? editProductMutation.isPending : addProductMutation.isPending}
+        isLoading={
+          sliderMode === "edit"
+            ? editProductMutation.isPending
+            : addProductMutation.isPending
+        }
         product={selectedProduct}
-        isEditing={sliderMode === 'edit'}
+        isEditing={sliderMode === "edit"}
       />
     </div>
   );

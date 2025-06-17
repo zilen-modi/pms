@@ -45,7 +45,6 @@ export function ProductCard({ product, onDuplicate }: ProductCardProps) {
   const watchedPrice = watch("price");
 
   const handleSave = async (data: CreateProduct) => {
-    // Check if any changes were made
     const hasChanges =
       data.name !== product.name ||
       data.price !== product.price ||
@@ -63,7 +62,6 @@ export function ProductCard({ product, onDuplicate }: ProductCardProps) {
         });
       } catch (error) {
         console.error("Failed to update product:", error);
-        // Reset to original values on error
         reset({
           name: product.name,
           description: product.description || "",
@@ -77,7 +75,6 @@ export function ProductCard({ product, onDuplicate }: ProductCardProps) {
   };
 
   const handleCancel = () => {
-    // Reset editable fields to original values
     reset({
       name: product.name,
       description: product.description || "",

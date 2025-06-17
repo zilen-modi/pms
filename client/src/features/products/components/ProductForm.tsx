@@ -47,7 +47,6 @@ export function ProductForm({
     },
   });
 
-  // Reset form when product changes or when the slider opens/closes
   useEffect(() => {
     if (!isOpen) {
       reset();
@@ -63,7 +62,6 @@ export function ProductForm({
     }
   }, [isOpen, product, reset]);
 
-  // Notify parent of form state changes
   useEffect(() => {
     if (onFormStateChange) {
       onFormStateChange({ isValid, isDirty });
@@ -104,7 +102,11 @@ export function ProductForm({
   };
 
   return (
-    <form id={formId} onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form
+      id={formId}
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="space-y-6"
+    >
       <Input
         {...register("name")}
         label="Product Name"
@@ -142,6 +144,7 @@ export function ProductForm({
             />
           </svg>
         }
+        required
       />
 
       <Input

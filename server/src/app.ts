@@ -8,23 +8,17 @@ import { errorHandler, notFound } from "@/middleware/error-handler";
 
 const app = express();
 
-// Security middleware
 app.use(helmet());
 
-// CORS middleware
 app.use(cors(corsOptions));
 
-// Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Logging middleware
 app.use(morgan("combined"));
 
-// API routes
 app.use("/api", routes);
 
-// Root endpoint
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -38,10 +32,8 @@ app.get("/", (req, res) => {
   });
 });
 
-// 404 handler
 app.use(notFound);
 
-// Global error handler
 app.use(errorHandler);
 
 export default app; 

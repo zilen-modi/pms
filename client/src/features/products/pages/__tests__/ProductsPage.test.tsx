@@ -71,7 +71,6 @@ describe("ProductsPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Default mock implementations
     mockUseGetProducts.mockReturnValue({
       data: mockProducts,
       isLoading: false,
@@ -114,7 +113,6 @@ describe("ProductsPage", () => {
 
     render(<ProductsPage />);
 
-    // Check for the loading spinner
     expect(document.querySelector(".animate-spin")).toBeInTheDocument();
     expect(document.querySelector(".border-pink-600")).toBeInTheDocument();
   });
@@ -169,7 +167,6 @@ describe("ProductsPage", () => {
     await user.type(searchInput, "test");
     expect(searchInput).toHaveValue("test");
 
-    // Find the clear button by class (the one inside the search input)
     const clearButton = document.querySelector(
       ".text-gray-400.hover\\:text-gray-600"
     ) as HTMLButtonElement;
@@ -191,16 +188,14 @@ describe("ProductsPage", () => {
   it("opens duplicate product slider", async () => {
     render(<ProductsPage />);
 
-    // Since we're in table view, look for buttons in the table
     const tableRows = screen.getAllByRole("row");
-    // Assuming duplicate functionality is available in the table
-    expect(tableRows.length).toBeGreaterThan(1); // Header + at least one product
+
+    expect(tableRows.length).toBeGreaterThan(1);
   });
 
   it("opens edit product slider", async () => {
     render(<ProductsPage />);
 
-    // Since we're in table view, look for buttons in the table
     const tableRows = screen.getAllByRole("row");
     expect(tableRows.length).toBeGreaterThan(1);
   });
@@ -211,7 +206,6 @@ describe("ProductsPage", () => {
 
     render(<ProductsPage />);
 
-    // Test the confirmation logic would be called
     expect(mockProducts.length).toBe(2);
   });
 
@@ -221,14 +215,12 @@ describe("ProductsPage", () => {
 
     render(<ProductsPage />);
 
-    // Test that products are still rendered
     expect(mockProducts.length).toBe(2);
   });
 
   it("displays products in table view by default", () => {
     render(<ProductsPage />);
 
-    // Check that table is rendered
     expect(screen.getByRole("table")).toBeInTheDocument();
   });
 
@@ -239,14 +231,12 @@ describe("ProductsPage", () => {
     const newProductButton = screen.getByText("New Product");
     await user.click(newProductButton);
 
-    // Check that slider opens with form
     expect(screen.getByText("Add New Product")).toBeInTheDocument();
   });
 
   it("handles API errors gracefully", async () => {
     const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-    // Mock the mutation to throw an error
     const mockAddProductMutation = {
       mutateAsync: jest.fn().mockRejectedValue(new Error("API Error")),
       isPending: false,
@@ -260,7 +250,6 @@ describe("ProductsPage", () => {
     const newProductButton = screen.getByText("New Product");
     await user.click(newProductButton);
 
-    // Try to submit the form (it should be disabled initially, but we can test the error handling)
     expect(screen.getByText("Create Product")).toBeDisabled();
 
     consoleSpy.mockRestore();
