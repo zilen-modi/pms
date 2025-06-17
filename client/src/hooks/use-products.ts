@@ -32,10 +32,14 @@ export const useAddProduct = () => {
     Parameters<IAddProductFn>[0]
   >({
     mutationFn: addProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.products.all,
-      });
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        queryKeys.products.all,
+        (oldData: IProduct[] | undefined) => {
+          if (!oldData) return oldData;
+          return [...oldData, data];
+        }
+      );
     },
   });
 };
@@ -59,10 +63,6 @@ export const useEditProduct = () => {
           );
         }
       );
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.products.all,
-      });
     },
   });
 };
@@ -86,10 +86,6 @@ export const useDeleteProduct = () => {
           );
         }
       );
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.products.all,
-      });
     },
   });
 };
