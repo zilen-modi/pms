@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Setup module aliases for production
 import "./utils/module-alias";
 import app from "./app";
