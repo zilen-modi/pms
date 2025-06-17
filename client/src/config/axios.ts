@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
@@ -48,7 +48,7 @@ axiosClient.interceptors.response.use(
       })
     }
     
-    return response.data
+    return response.data.data
   },
   (error: AxiosError) => {
     // Handle different error scenarios

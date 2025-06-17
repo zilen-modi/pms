@@ -1,6 +1,4 @@
-// Using mock data instead of axios for development
-import { mockProductService } from "@/data/mockProducts";
-
+import axiosClient from "@/config/axios";
 import type {
   IAddProductFn,
   IDeleteProductFn,
@@ -8,14 +6,13 @@ import type {
   IGetProductsFn,
 } from "./index.types";
 
-export const getProducts: IGetProductsFn = () =>
-  mockProductService.getProducts();
+export const getProducts: IGetProductsFn = () => axiosClient.get("/products");
 
 export const addProduct: IAddProductFn = ({ productDetails }) =>
-  mockProductService.addProduct(productDetails);
+  axiosClient.post("/products", productDetails);
 
 export const editProduct: IEditProductFn = ({ productDetails }) =>
-  mockProductService.updateProduct(productDetails.id!, productDetails);
+  axiosClient.put(`/products/${productDetails.id}`, productDetails);
 
 export const deleteProduct: IDeleteProductFn = ({ productId }) =>
-  mockProductService.deleteProduct(productId);
+  axiosClient.delete(`/products/${productId}`);
